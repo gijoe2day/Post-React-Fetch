@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import Posts from "./Posts";
+import Navbar from "./Navbar";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import About from "./About";
+import Contact from "./Contact";
 
-function App() {
+const App = () => {
+  useEffect(() => {
+    getPosts();
+  }, []);
+
+  const [posts, setPosts] = useState([]);
+
+  const getPosts = async () => {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await response.json();
+    console.log(data);
+    setPosts(data);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <div className="App">
+          <Navbar />
+          <Route path="/about" exact component={About} />
+          <Route path="/contact" exact component={Contact} />
+          <Route path="/" exact component={Posts}>
+            {posts.map((post) => (
+              <Posts key={post.id} title={post.title} body={post.body} />
+            ))}
+          </Route>
+          ;
+        </div>
+      </Switch>
+    </Router>
   );
-}
+};
 
 export default App;
